@@ -15,20 +15,76 @@ document.addEventListener('DOMContentLoaded', function() {
         chatBox.scrollTop = chatBox.scrollHeight;
     }
 
-    function botReply(userText) {
-        let reply = '안녕하세요! 무엇을 도와드릴까요?';
-        if (userText.includes('안녕')) reply = '안녕하세요! 반가워요.';
-        else if (userText.includes('이름')) reply = '저는 Vibe 챗봇입니다.';
-        else if (userText.includes('날씨')) reply = '오늘의 날씨는 맑음입니다.';
-        appendMessage(reply, 'bot');
+    async function getTodayQuote() {
+        appendMessage('오늘의 명언을 가져오는 중...', 'bot');
+        try {
+            const apiKey = 'YOUR_OPENAI_API_KEY'; // 여기에 본인 OpenAI API 키 입력
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [
+                        { role: 'system', content: 'You are a helpful assistant.' },
+                        { role: 'user', content: '오늘의 명언 하나만 한국어로 알려줘.' }
+                    ],
+                    max_tokens: 60
+                })
+            });
+            const data = await response.json();
+            chatBox.lastChild.remove();
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                appendMessage('💡 오늘의 명언: ' + data.choices[0].message.content, 'bot');
+            } else {
+                appendMessage('명언을 가져올 수 없습니다.', 'bot');
+            }
+        } catch (err) {
+            chatBox.lastChild.remove();
+            appendMessage('명언을 가져오는 중 오류가 발생했습니다.', 'bot');
+        }
     }
 
-    function sendMessage() {
+    async function botReply(userText) {
+        appendMessage('답변 생성 중...', 'bot');
+        try {
+            const apiKey = 'YOUR_OPENAI_API_KEY'; // 여기에 본인 OpenAI API 키 입력
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: 'gpt-4o',
+                    messages: [
+                        { role: 'system', content: 'You are a helpful assistant.' },
+                        { role: 'user', content: userText }
+                    ],
+                    max_tokens: 100
+                })
+            });
+            const data = await response.json();
+            chatBox.lastChild.remove();
+            if (data.choices && data.choices[0] && data.choices[0].message) {
+                appendMessage(data.choices[0].message.content, 'bot');
+            } else {
+                appendMessage('챗봇 응답을 가져올 수 없습니다.', 'bot');
+            }
+        } catch (err) {
+            chatBox.lastChild.remove();
+            appendMessage('오류가 발생했습니다.', 'bot');
+        }
+    }
+
+    async function sendMessage() {
         const text = userInput.value.trim();
         if (text) {
             appendMessage(text, 'user');
-            botReply(text);
             userInput.value = '';
+            await botReply(text);
         }
     }
 
@@ -43,4 +99,7 @@ document.addEventListener('DOMContentLoaded', function() {
             sendMessage();
         }
     });
+
+    // 페이지 로드시 오늘의 명언 출력
+    getTodayQuote();
 });
