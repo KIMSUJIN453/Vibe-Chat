@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function getTodayQuote() {
         appendMessage('오늘의 명언을 가져오는 중...', 'bot');
         try {
-            const apiKey = 'YOUR_OPENAI_API_KEY'; // 여기에 본인 OpenAI API 키 입력
+            const apiKey = 'Your_OPEN_API_Key'; // 여기에 본인 OpenAI API 키 입력
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o',
+                    model: 'gpt-4o-mini',
                     messages: [
                         { role: 'system', content: 'You are a helpful assistant.' },
                         { role: 'user', content: '오늘의 명언 하나만 한국어로 알려줘.' }
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', function() {
     async function botReply(userText) {
         appendMessage('답변 생성 중...', 'bot');
         try {
-            const apiKey = 'YOUR_OPENAI_API_KEY'; // 여기에 본인 OpenAI API 키 입력
+            const apiKey = 'Your_Open_API_Key'; // 여기에 본인 OpenAI API 키 입력
             const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Authorization': `Bearer ${apiKey}`
                 },
                 body: JSON.stringify({
-                    model: 'gpt-4o',
+                    model: 'gpt-4o-mini',
                     messages: [
                         { role: 'system', content: 'You are a helpful assistant.' },
                         { role: 'user', content: userText }
