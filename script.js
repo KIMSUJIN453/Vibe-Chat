@@ -100,6 +100,12 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // 다크/라이트 모드 토글
+    const modeToggle = document.getElementById('mode-toggle');
+    modeToggle.addEventListener('change', function() {
+        document.body.classList.toggle('dark-mode', modeToggle.checked);
+    });
+
     // 페이지 로드시 오늘의 명언 출력
     getTodayQuote();
 });
